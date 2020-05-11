@@ -1,6 +1,6 @@
 #!/bin/sh
 
-mvn clean
+./mvnw clean
 
-mvn package &&
+./mvnw package &&
 java -jar ./target/app.jar -url "$1" -token "$2"
