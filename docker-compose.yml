@@ -1,0 +1,13 @@
+version: '3'
+services:
+  bot:
+    build:
+      context: .
+    command: ["-url", "${URL}", "-token", "${TOKEN}]"]
+  proxy:
+    image: nginx:mainline-alpine
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro

@@ -81,7 +81,7 @@
 
         <dependency>
             <groupId>org.http4k</groupId>
-            <artifactId>http4k-server-jetty</artifactId>
+            <artifactId>http4k-server-apache</artifactId>
             <version>${http4k.version}</version>
         </dependency>
 

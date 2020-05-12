@@ -15,9 +15,8 @@ import org.example.routes.SendMessageRoute
 import org.http4k.core.Method
 import org.http4k.routing.bind
 import org.http4k.routing.routes
-import org.http4k.server.SunHttp
+import org.http4k.server.ApacheServer
 import org.http4k.server.asServer
-import java.lang.Exception
 
 val parser = DefaultParser()
 val options: Options = Options()
@@ -35,7 +34,7 @@ fun main(args: Array<String>) {
         "/" bind Method.GET to EventsRoute(),
         "/message" bind Method.POST to SendMessageRoute(mapper, http)
     )
-    app.asServer(SunHttp(80)).start().also {
+    app.asServer(ApacheServer(8080)).start().also {
         try {
             val webhookURL = cmd.getOptionValue("url")
             val token = cmd.getOptionValue("token")
