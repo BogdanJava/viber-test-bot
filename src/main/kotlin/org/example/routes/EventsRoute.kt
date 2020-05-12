@@ -32,12 +32,12 @@ class EventsRoute(
                 if (verbose) {
                     e.printStackTrace()
                 }
-                val json = mapper.writeValueAsString(
-                    mapOf(
-                        "reason" to e.message
-                    )
-                )
-                return Response(Status.INTERNAL_SERVER_ERROR).body(json)
+//                val json = mapper.writeValueAsString(
+//                    mapOf(
+//                        "reason" to e.message
+//                    )
+//                )
+//                return Response(Status.INTERNAL_SERVER_ERROR).body(json)
             }
         } else {
             println("Callback for \"${event.event}\" is not defined")
