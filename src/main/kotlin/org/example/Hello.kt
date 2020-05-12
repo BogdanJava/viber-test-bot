@@ -23,6 +23,7 @@ import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.ApacheServer
+import org.http4k.server.Http4kServer
 import org.http4k.server.asServer
 
 val parser = DefaultParser()
@@ -30,6 +31,7 @@ val options: Options = Options()
     .addOption(Option.builder("url").hasArg().required().build())
     .addOption(Option.builder("token").hasArg().required().build())
     .addOption(Option.builder("v").longOpt("verbose").hasArg(false).build())
+    .addOption(Option.builder("d").longOpt("delay").type(Int::class.java).hasArg().build())
 val http: CloseableHttpClient = HttpClientBuilder.create().build()
 val mapper = jacksonObjectMapper().also {
     it.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -42,6 +44,7 @@ fun main(args: Array<String>) {
     val webhookURL = cmd.getOptionValue("url")
     val token = cmd.getOptionValue("token")
     val verbose = cmd.hasOption("v")
+    val connectToBotDelay = cmd.getOptionValue("d", "5000").toLong()
 
     val messageService = MessageService(mapper, http, token)
 
@@ -57,19 +60,24 @@ fun main(args: Array<String>) {
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
     app.asServer(ApacheServer(8080)).start().also {
-        try {
-            if (verbose) {
-                println("Webhook URL: $webhookURL, bot auth token: $token")
-            }
-            setWebhook(webhookURL, token, verbose)
-        } catch (e: Throwable) {
-            if (verbose) {
-                e.printStackTrace()
-            }
-            println(e.message)
-            println("Server startup error. Shutting down...")
-            it.stop()
+        Thread.sleep(connectToBotDelay)
+        connectToBot(it, webhookURL, token, verbose)
+    }
+}
+
+fun connectToBot(server: Http4kServer, webhookURL: String, token: String, verbose: Boolean) {
+    try {
+        if (verbose) {
+            println("Webhook URL: $webhookURL, bot auth token: $token")
         }
+        setWebhook(webhookURL, token, verbose)
+    } catch (e: Throwable) {
+        if (verbose) {
+            e.printStackTrace()
+        }
+        println(e.message)
+        println("Server startup error. Shutting down...")
+        server.stop()
     }
 }
 
