@@ -14,7 +14,8 @@ import org.http4k.core.Status
 @ExperimentalStdlibApi
 class EventsRoute(
     private val mapper: ObjectMapper,
-    private val callbackResolver: CallbackResolver
+    private val callbackResolver: CallbackResolver,
+    private val verbose: Boolean
 ) : HttpHandler {
     override fun invoke(request: Request): Response {
         val event = mapper.readValue(request.body.stream, BotEvent::class.java)
@@ -25,6 +26,9 @@ class EventsRoute(
             try {
                 callback.process(request, event)
             } catch (e: Throwable) {
+                if (verbose) {
+                    println(e)
+                }
                 val json = mapper.writeValueAsString(
                     mapOf(
                         "reason" to e.message

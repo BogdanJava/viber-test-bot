@@ -7,7 +7,6 @@ import org.http4k.core.Request
 class SubscribedCallback : ViberCallback {
     override fun process(request: Request, event: BotEvent) {
         println("User subscribed: ${event.sender?.name}")
-        TODO("Not yet implemented")
     }
 
 }
