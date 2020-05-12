@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
     )
 
     val app = routes(
-        "/" bind Method.POST to EventsRoute(mapper, callbackResolver),
+        "/" bind Method.POST to EventsRoute(mapper, callbackResolver, verbose),
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
     app.asServer(ApacheServer(8080)).start().also {
