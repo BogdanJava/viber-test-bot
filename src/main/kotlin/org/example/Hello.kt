@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     val verbose = cmd.hasOption("v")
 
     val app = routes(
-        "/" bind Method.GET to EventsRoute(),
+        "/" bind Method.POST to EventsRoute(),
         "/message" bind Method.POST to SendMessageRoute(mapper, http)
     )
     app.asServer(ApacheServer(8080)).start().also {
@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
 fun setWebhook(webhookURL: String, token: String, verbose: Boolean): WebhookResponse {
     val request = HttpPost("https://chatapi.viber.com/pa/set_webhook")
     val json = mapper.writeValueAsString(webhookSetup(webhookURL))
-    request.entity = StringEntity(json)
+    request.entity = StringEntity(json).also { it.setContentType("application/json") }
     request.addHeader("Content-Type", "application/json")
     request.addHeader("X-Viber-Auth-Token", token)
     if (verbose) {
