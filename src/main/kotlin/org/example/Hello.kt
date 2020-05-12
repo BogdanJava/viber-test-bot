@@ -18,6 +18,8 @@ import org.example.routes.callbacks.SubscribedCallback
 import org.example.routes.callbacks.WebhookCallback
 import org.example.service.MessageService
 import org.http4k.core.Method
+import org.http4k.core.Response
+import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.ApacheServer
@@ -50,6 +52,7 @@ fun main(args: Array<String>) {
     )
 
     val app = routes(
+        "/" bind Method.GET to { Response(Status.OK) },
         "/" bind Method.POST to EventsRoute(mapper, callbackResolver, verbose),
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
