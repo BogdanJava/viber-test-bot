@@ -22,9 +22,7 @@ class EventsRoute(
             println(request)
         }
         val event = mapper.readValue(request.body.stream, BotEvent::class.java)
-
         val callback = callbackResolver.resolve(event.event)
-
         if (callback != null) {
             try {
                 callback.process(request, event)
@@ -32,12 +30,8 @@ class EventsRoute(
                 if (verbose) {
                     e.printStackTrace()
                 }
-//                val json = mapper.writeValueAsString(
-//                    mapOf(
-//                        "reason" to e.message
-//                    )
-//                )
-//                return Response(Status.INTERNAL_SERVER_ERROR).body(json)
+                val json = mapper.writeValueAsString(mapOf("reason" to e.message))
+                return Response(Status.INTERNAL_SERVER_ERROR).body(json)
             }
         } else {
             println("Callback for \"${event.event}\" is not defined")

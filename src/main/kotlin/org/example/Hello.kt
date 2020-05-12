@@ -61,7 +61,6 @@ fun main(args: Array<String>) {
     )
 
     val server = app.asServer(ApacheServer(8080)).start()
-    connectToBot(server, webhookURL, token, verbose)
 }
 
 fun connectToBot(server: Http4kServer, webhookURL: String, token: String, verbose: Boolean) {

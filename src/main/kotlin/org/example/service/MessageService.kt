@@ -10,7 +10,11 @@ import org.example.model.ViberMessage
 /**
  * @author ts-bahdan.shyshkin
  */
-class MessageService(val mapper: ObjectMapper, val http: HttpClient, val token: String) {
+class MessageService(
+    private val mapper: ObjectMapper,
+    private val http: HttpClient,
+    private val token: String
+) {
     fun send(message: ViberMessage): HttpResponse {
         val request = HttpPost("https://chatapi.viber.com/pa/send_message")
         request.entity = StringEntity(mapper.writeValueAsString(message))
