@@ -18,7 +18,8 @@ class MessageCallback(private val messageService: MessageService) : ViberCallbac
             text = "Response: ${event.message?.text}",
             receiver = event.sender?.id
         )
-        messageService.send(message)
+        val response = messageService.send(message)
+        println(response)
     }
 
 }
