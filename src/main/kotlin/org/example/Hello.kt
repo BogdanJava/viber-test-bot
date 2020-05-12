@@ -63,12 +63,13 @@ fun setWebhook(webhookURL: String, token: String, verbose: Boolean): WebhookResp
     request.addHeader("X-Viber-Auth-Token", token)
     if (verbose) {
         println(request)
+        println(request.entity)
     }
     val response = http.execute(request)
     val body = mapper.readValue(response.entity.content, WebhookResponse::class.java)
     if (body.status != 0) {
         if (verbose) {
-            println(response)
+            println("Response: $response, body: $body")
         }
         throw RuntimeException(body.statusMessage)
     } else return body
