@@ -30,6 +30,7 @@ val mapper = jacksonObjectMapper().also {
 
 fun main(args: Array<String>) {
     val cmd = parser.parse(options, args)
+    val verbose = cmd.hasOption("v")
 
     val app = routes(
         "/" bind Method.GET to EventsRoute(),
@@ -39,12 +40,12 @@ fun main(args: Array<String>) {
         try {
             val webhookURL = cmd.getOptionValue("url")
             val token = cmd.getOptionValue("token")
-            if (cmd.hasOption("v")) {
+            if (verbose) {
                 println("Webhook URL: $webhookURL, bot auth token: $token")
             }
-            setWebhook(webhookURL, token)
-        } catch (e: Exception) {
-            if (cmd.hasOption("v")) {
+            setWebhook(webhookURL, token, verbose)
+        } catch (e: Throwable) {
+            if (verbose) {
                 e.printStackTrace()
             }
             println(e.message)
@@ -54,7 +55,7 @@ fun main(args: Array<String>) {
     }
 }
 
-fun setWebhook(webhookURL: String, token: String): WebhookResponse {
+fun setWebhook(webhookURL: String, token: String, verbose: Boolean): WebhookResponse {
     val request = HttpPost("https://chatapi.viber.com/pa/set_webhook")
     val json = mapper.writeValueAsString(webhookSetup(webhookURL))
     request.entity = StringEntity(json)
@@ -63,6 +64,9 @@ fun setWebhook(webhookURL: String, token: String): WebhookResponse {
     val response = http.execute(request)
     val body = mapper.readValue(response.entity.content, WebhookResponse::class.java)
     if (body.status != 0) {
+        if (verbose) {
+            println(response)
+        }
         throw RuntimeException(body.statusMessage)
     } else return body
 }
