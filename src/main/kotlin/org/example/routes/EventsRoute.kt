@@ -27,7 +27,7 @@ class EventsRoute(
                 callback.process(request, event)
             } catch (e: Throwable) {
                 if (verbose) {
-                    println(e)
+                    e.printStackTrace()
                 }
                 val json = mapper.writeValueAsString(
                     mapOf(
