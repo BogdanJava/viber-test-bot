@@ -18,6 +18,9 @@ class EventsRoute(
     private val verbose: Boolean
 ) : HttpHandler {
     override fun invoke(request: Request): Response {
+        if (verbose) {
+            println(request)
+        }
         val event = mapper.readValue(request.body.stream, BotEvent::class.java)
 
         val callback = callbackResolver.resolve(event.event)
