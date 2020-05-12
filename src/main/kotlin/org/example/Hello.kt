@@ -59,10 +59,9 @@ fun main(args: Array<String>) {
         "/" bind Method.POST to EventsRoute(mapper, callbackResolver, verbose),
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
-    app.asServer(ApacheServer(8080)).start().also {
-        Thread.sleep(connectToBotDelay)
-        connectToBot(it, webhookURL, token, verbose)
-    }
+
+    val server = app.asServer(ApacheServer(8080)).start()
+    connectToBot(server, webhookURL, token, verbose)
 }
 
 fun connectToBot(server: Http4kServer, webhookURL: String, token: String, verbose: Boolean) {
