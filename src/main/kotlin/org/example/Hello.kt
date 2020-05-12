@@ -22,6 +22,7 @@ val parser = DefaultParser()
 val options: Options = Options()
     .addOption(Option.builder("url").hasArg().required().build())
     .addOption(Option.builder("token").hasArg().required().build())
+    .addOption(Option.builder("v").longOpt("verbose").hasArg(false).build())
 val http: CloseableHttpClient = HttpClientBuilder.create().build()
 val mapper = jacksonObjectMapper().also {
     it.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -38,9 +39,12 @@ fun main(args: Array<String>) {
         try {
             val webhookURL = cmd.getOptionValue("url")
             val token = cmd.getOptionValue("token")
+            if (cmd.hasOption("v")) {
+                println("Webhook URL: $webhookURL, bot auth token: $token")
+            }
             setWebhook(webhookURL, token)
         } catch (e: Exception) {
-            e.printStackTrace()
+            println(e.message)
             println("Server startup error. Shutting down...")
             it.stop()
         }
