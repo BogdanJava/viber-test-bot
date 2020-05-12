@@ -44,6 +44,9 @@ fun main(args: Array<String>) {
             }
             setWebhook(webhookURL, token)
         } catch (e: Exception) {
+            if (cmd.hasOption("v")) {
+                e.printStackTrace()
+            }
             println(e.message)
             println("Server startup error. Shutting down...")
             it.stop()
