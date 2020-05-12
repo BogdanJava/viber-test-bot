@@ -32,6 +32,7 @@ val mapper = jacksonObjectMapper().also {
     it.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 }
 
+@ExperimentalStdlibApi
 fun main(args: Array<String>) {
     val cmd = parser.parse(options, args)
 

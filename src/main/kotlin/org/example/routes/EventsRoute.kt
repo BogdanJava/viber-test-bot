@@ -11,6 +11,7 @@ import org.http4k.core.Status
 /**
  * @author ts-bahdan.shyshkin
  */
+@ExperimentalStdlibApi
 class EventsRoute(
     private val mapper: ObjectMapper,
     private val callbackResolver: CallbackResolver

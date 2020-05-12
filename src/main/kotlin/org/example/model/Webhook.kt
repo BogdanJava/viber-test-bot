@@ -1,7 +1,6 @@
 package org.example.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.jetbrains.annotations.Nullable
 
 /**
  * @author ts-bahdan.shyshkin
