@@ -15,6 +15,7 @@ import org.example.routes.SendMessageRoute
 import org.example.routes.callbacks.CallbackResolver
 import org.example.routes.callbacks.MessageCallback
 import org.example.routes.callbacks.SubscribedCallback
+import org.example.routes.callbacks.WebhookCallback
 import org.example.service.MessageService
 import org.http4k.core.Method
 import org.http4k.routing.bind
@@ -44,7 +45,8 @@ fun main(args: Array<String>) {
 
     val callbackResolver = CallbackResolver(
         MessageCallback(messageService),
-        SubscribedCallback()
+        SubscribedCallback(),
+        WebhookCallback()
     )
 
     val app = routes(
