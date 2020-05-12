@@ -12,6 +12,9 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.example.model.WebhookResponse
 import org.example.routes.EventsRoute
 import org.example.routes.SendMessageRoute
+import org.example.routes.callbacks.CallbackResolver
+import org.example.routes.callbacks.MessageCallback
+import org.example.routes.callbacks.SubscribedCallback
 import org.example.service.MessageService
 import org.http4k.core.Method
 import org.http4k.routing.bind
@@ -38,8 +41,13 @@ fun main(args: Array<String>) {
 
     val messageService = MessageService(mapper, http, token)
 
+    val callbackResolver = CallbackResolver(
+        MessageCallback(messageService),
+        SubscribedCallback()
+    )
+
     val app = routes(
-        "/" bind Method.POST to EventsRoute(mapper, messageService),
+        "/" bind Method.POST to EventsRoute(mapper, callbackResolver),
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
     app.asServer(ApacheServer(8080)).start().also {

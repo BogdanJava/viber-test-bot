@@ -11,8 +11,8 @@ import org.http4k.core.Response
  * @author ts-bahdan.shyshkin
  */
 class SendMessageRoute(
-    val mapper: ObjectMapper,
-    val messageService: MessageService
+    private val mapper: ObjectMapper,
+    private val messageService: MessageService
 ) : HttpHandler {
     override fun invoke(request: Request): Response {
         val parsedBody = mapper.readValue(request.body.stream, object : TypeReference<Map<String, String>>() {})

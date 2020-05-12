@@ -2,9 +2,7 @@ package org.example.routes
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.example.model.BotEvent
-import org.example.model.ViberAccount
-import org.example.model.ViberMessage
-import org.example.service.MessageService
+import org.example.routes.callbacks.CallbackResolver
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
 import org.http4k.core.Response
@@ -15,18 +13,26 @@ import org.http4k.core.Status
  */
 class EventsRoute(
     private val mapper: ObjectMapper,
-    private val messageService: MessageService
+    private val callbackResolver: CallbackResolver
 ) : HttpHandler {
     override fun invoke(request: Request): Response {
         val event = mapper.readValue(request.body.stream, BotEvent::class.java)
-        if (event.event == "message") {
-            val message = ViberMessage(
-                sender = ViberAccount(name = "Kek"),
-                type = "text",
-                text = "Response: ${event.message?.text}",
-                receiver = event.sender?.id
-            )
-            messageService.send(message)
+
+        val callback = callbackResolver.resolve(event.event)
+
+        if (callback != null) {
+            try {
+                callback.process(request, event)
+            } catch (e: Throwable) {
+                val json = mapper.writeValueAsString(
+                    mapOf(
+                        "reason" to e.message
+                    )
+                )
+                return Response(Status.INTERNAL_SERVER_ERROR).body(json)
+            }
+        } else {
+            println("Callback for \"${event.event}\" is not defined")
         }
         return Response(Status.OK)
     }
