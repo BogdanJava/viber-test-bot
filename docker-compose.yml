@@ -3,7 +3,7 @@ services:
   bot:
     build:
       context: .
-    command: ["-url", "${URL}", "-token", "${TOKEN}]"]
+    command: ["-url", "${URL}", "-token", "${TOKEN}"]
   proxy:
     image: nginx:mainline-alpine
     ports:
