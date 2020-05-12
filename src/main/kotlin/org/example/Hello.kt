@@ -12,6 +12,7 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.example.model.WebhookResponse
 import org.example.routes.EventsRoute
 import org.example.routes.SendMessageRoute
+import org.example.service.MessageService
 import org.http4k.core.Method
 import org.http4k.routing.bind
 import org.http4k.routing.routes
@@ -30,16 +31,19 @@ val mapper = jacksonObjectMapper().also {
 
 fun main(args: Array<String>) {
     val cmd = parser.parse(options, args)
+
+    val webhookURL = cmd.getOptionValue("url")
+    val token = cmd.getOptionValue("token")
     val verbose = cmd.hasOption("v")
 
+    val messageService = MessageService(mapper, http, token)
+
     val app = routes(
-        "/" bind Method.POST to EventsRoute(),
-        "/message" bind Method.POST to SendMessageRoute(mapper, http)
+        "/" bind Method.POST to EventsRoute(mapper, messageService),
+        "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
     app.asServer(ApacheServer(8080)).start().also {
         try {
-            val webhookURL = cmd.getOptionValue("url")
-            val token = cmd.getOptionValue("token")
             if (verbose) {
                 println("Webhook URL: $webhookURL, bot auth token: $token")
             }

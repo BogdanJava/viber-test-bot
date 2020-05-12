@@ -91,6 +91,12 @@
             <version>${http4k.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.4</version>
+        </dependency>
+
     </dependencies>
 
     <build>
