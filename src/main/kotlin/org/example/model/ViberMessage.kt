@@ -10,7 +10,7 @@ data class ViberMessage(
     val text: String? = null,
     val media: String? = null,
     val location: GeoLocation? = null,
-    val sender: ViberAccount,
+    val sender: ViberAccount? = null,
     val receiver: String? = null,
     @JsonProperty("tracking_data") val trackingData: String? = null
 )
