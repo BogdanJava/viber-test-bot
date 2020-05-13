@@ -7,8 +7,8 @@ import kotlin.reflect.full.findAnnotation
  * @author ts-bahdan.shyshkin
  */
 @ExperimentalStdlibApi
-class CallbackResolver(vararg callbacks: ViberCallback<ViberBotEvent>) {
-    private val callbackMap: MutableMap<String, ViberCallback<ViberBotEvent>> = mutableMapOf()
+class CallbackResolver(vararg callbacks: ViberCallback<out ViberBotEvent>) {
+    private val callbackMap: MutableMap<String, ViberCallback<out ViberBotEvent>> = mutableMapOf()
 
     fun resolve(name: String) = callbackMap[name]
 
