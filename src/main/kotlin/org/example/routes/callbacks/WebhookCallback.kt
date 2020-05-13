@@ -8,7 +8,8 @@ import org.http4k.core.Request
  * @author ts-bahdan.shyshkin
  */
 @CallbackMetadata(event = "webhook")
-class WebhookCallback(objectMapper: ObjectMapper) : ViberCallback<WebhookEvent>(objectMapper) {
+class WebhookCallback(objectMapper: ObjectMapper) :
+    ViberCallback<WebhookEvent>(objectMapper, WebhookEvent::class.java) {
     override fun process(request: Request) {
         println("Webhook setup request received")
     }

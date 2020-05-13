@@ -12,7 +12,7 @@ import org.http4k.core.Request
  */
 @CallbackMetadata(event = "message")
 class MessageCallback(private val messageService: MessageService, objectMapper: ObjectMapper) :
-    ViberCallback<MessageReceivedEvent>(objectMapper) {
+    ViberCallback<MessageReceivedEvent>(objectMapper, MessageReceivedEvent::class.java) {
     override fun process(request: Request) {
         val event = getEvent(request)
         val message = ViberMessage(

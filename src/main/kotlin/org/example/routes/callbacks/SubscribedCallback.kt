@@ -7,7 +7,7 @@ import org.http4k.core.Request
 
 @CallbackMetadata(event = "subscribed")
 class SubscribedCallback(private val mongoService: MongoService, objectMapper: ObjectMapper) :
-    ViberCallback<SubscribedEvent>(objectMapper) {
+    ViberCallback<SubscribedEvent>(objectMapper, SubscribedEvent::class.java) {
 
     override fun process(request: Request) {
         val event = getEvent(request)
