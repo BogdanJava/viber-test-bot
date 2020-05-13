@@ -17,6 +17,7 @@ import org.example.routes.callbacks.MessageCallback
 import org.example.routes.callbacks.SubscribedCallback
 import org.example.routes.callbacks.WebhookCallback
 import org.example.service.MessageService
+import org.example.service.MongoService
 import org.http4k.core.Method
 import org.http4k.core.Response
 import org.http4k.core.Status
@@ -30,8 +31,9 @@ val parser = DefaultParser()
 val options: Options = Options()
     .addOption(Option.builder("url").hasArg().required().build())
     .addOption(Option.builder("token").hasArg().required().build())
+    .addOption(Option.builder("mongoHost").hasArg().required().build())
+    .addOption(Option.builder("mongoPort").type(Int::class.java).hasArg().required().build())
     .addOption(Option.builder("v").longOpt("verbose").hasArg(false).build())
-    .addOption(Option.builder("d").longOpt("delay").type(Int::class.java).hasArg().build())
 val http: CloseableHttpClient = HttpClientBuilder.create().build()
 val mapper = jacksonObjectMapper().also {
     it.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -44,23 +46,27 @@ fun main(args: Array<String>) {
     val webhookURL = cmd.getOptionValue("url")
     val token = cmd.getOptionValue("token")
     val verbose = cmd.hasOption("v")
-    val connectToBotDelay = cmd.getOptionValue("d", "5000").toLong()
+    val mongoHost = cmd.getOptionValue("mongoHost") ?: "localhost"
+    val mongoPort = cmd.getParsedOptionValue("mongoPort") as? Int ?: 27017
 
     val messageService = MessageService(mapper, http, token)
+    val mongoService = MongoService(mongoHost, mongoPort)
 
     val callbackResolver = CallbackResolver(
-        MessageCallback(messageService),
-        SubscribedCallback(),
-        WebhookCallback()
+        MessageCallback(messageService, mapper),
+        SubscribedCallback(mongoService, mapper),
+        WebhookCallback(mapper)
     )
 
     val app = routes(
-        "/" bind Method.GET to { Response(Status.OK) },
         "/" bind Method.POST to EventsRoute(mapper, callbackResolver, verbose),
         "/message" bind Method.POST to SendMessageRoute(mapper, messageService)
     )
 
-    val server = app.asServer(ApacheServer(8080)).start()
+    app.asServer(ApacheServer(8080)).start().also {
+        connectToBot(it, webhookURL, token, verbose)
+        println("Server started on port ${it.port()}. Webhook is set to \"${webhookURL}\"")
+    }
 }
 
 fun connectToBot(server: Http4kServer, webhookURL: String, token: String, verbose: Boolean) {

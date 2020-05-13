@@ -1,13 +1,14 @@
 package org.example.routes.callbacks
 
+import org.example.model.ViberBotEvent
 import kotlin.reflect.full.findAnnotation
 
 /**
  * @author ts-bahdan.shyshkin
  */
 @ExperimentalStdlibApi
-class CallbackResolver(vararg callbacks: ViberCallback) {
-    private val callbackMap: MutableMap<String, ViberCallback> = mutableMapOf()
+class CallbackResolver(vararg callbacks: ViberCallback<ViberBotEvent>) {
+    private val callbackMap: MutableMap<String, ViberCallback<ViberBotEvent>> = mutableMapOf()
 
     fun resolve(name: String) = callbackMap[name]
 

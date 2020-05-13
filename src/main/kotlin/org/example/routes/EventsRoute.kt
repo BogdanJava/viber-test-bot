@@ -1,7 +1,6 @@
 package org.example.routes
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.example.model.BotEvent
 import org.example.routes.callbacks.CallbackResolver
 import org.http4k.core.HttpHandler
 import org.http4k.core.Request
@@ -21,11 +20,12 @@ class EventsRoute(
         if (verbose) {
             println(request)
         }
-        val event = mapper.readValue(request.body.stream, BotEvent::class.java)
-        val callback = callbackResolver.resolve(event.event)
+        val event = mapper.readValue(request.bodyString(), Map::class.java)
+        val eventName = event["event"]!! as String
+        val callback = callbackResolver.resolve(eventName)
         if (callback != null) {
             try {
-                callback.process(request, event)
+                callback.process(request)
             } catch (e: Throwable) {
                 if (verbose) {
                     e.printStackTrace()
@@ -34,7 +34,7 @@ class EventsRoute(
                 return Response(Status.INTERNAL_SERVER_ERROR).body(json)
             }
         } else {
-            println("Callback for \"${event.event}\" is not defined")
+            println("Callback for \"$eventName\" is not defined")
         }
         return Response(Status.OK)
     }
