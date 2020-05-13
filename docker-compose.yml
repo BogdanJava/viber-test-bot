@@ -2,6 +2,8 @@ version: '3'
 
 services:
   bot:
+    ports:
+    - 5005:5005
     build:
       context: .
     command: ["-url", "${URL}", "-token", "${TOKEN}", "-v"]

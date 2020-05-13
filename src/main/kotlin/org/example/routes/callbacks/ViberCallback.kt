@@ -8,7 +8,7 @@ import org.http4k.core.Request
 /**
  * @author ts-bahdan.shyshkin
  */
-abstract class ViberCallback<out T : ViberBotEvent>(private val mapper: ObjectMapper) {
+abstract class ViberCallback<T : ViberBotEvent>(private val mapper: ObjectMapper) {
     abstract fun process(request: Request)
 
     protected fun getEvent(request: Request): T = mapper.readValue(request.bodyString(),
