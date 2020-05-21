@@ -9,9 +9,11 @@ import org.http4k.core.Request
 class SubscribedCallback(private val mongoService: MongoService, objectMapper: ObjectMapper) :
     ViberCallback<SubscribedEvent>(objectMapper, SubscribedEvent::class.java) {
 
-    override fun process(request: Request) {
-        val event = getEvent(request)
+    override fun process(request: Request, event: SubscribedEvent) {
         println("User subscribed: ${event.user}")
+        mongoService.save(event.user) {
+            println("User saved in DB: $it")
+        }
     }
 
 }

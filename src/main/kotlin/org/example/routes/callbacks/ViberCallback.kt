@@ -11,7 +11,12 @@ abstract class ViberCallback<T : ViberBotEvent>(
     private val mapper: ObjectMapper,
     private val eventClass: Class<T>
 ) {
-    abstract fun process(request: Request)
+    fun process(request: Request) {
+        val event = getEvent(request)
+        return process(request, event)
+    }
 
-    protected fun getEvent(request: Request): T = mapper.readValue(request.bodyString(), eventClass)
+    protected abstract fun process(request: Request, event: T)
+
+    private fun getEvent(request: Request): T = mapper.readValue(request.bodyString(), eventClass)
 }

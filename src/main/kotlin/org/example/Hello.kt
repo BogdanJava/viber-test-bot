@@ -12,15 +12,10 @@ import org.apache.http.impl.client.HttpClientBuilder
 import org.example.model.WebhookResponse
 import org.example.routes.EventsRoute
 import org.example.routes.SendMessageRoute
-import org.example.routes.callbacks.CallbackResolver
-import org.example.routes.callbacks.MessageCallback
-import org.example.routes.callbacks.SubscribedCallback
-import org.example.routes.callbacks.WebhookCallback
+import org.example.routes.callbacks.*
 import org.example.service.MessageService
 import org.example.service.MongoService
 import org.http4k.core.Method
-import org.http4k.core.Response
-import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.ApacheServer
@@ -55,7 +50,8 @@ fun main(args: Array<String>) {
     val callbackResolver = CallbackResolver(
         MessageCallback(messageService, mapper),
         SubscribedCallback(mongoService, mapper),
-        WebhookCallback(mapper)
+        WebhookCallback(mapper),
+        UnsubscribedCallback(mapper, mongoService)
     )
 
     val app = routes(

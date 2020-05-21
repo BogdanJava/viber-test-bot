@@ -15,7 +15,6 @@ data class SubscribedEvent(
     @JsonProperty("message_token") val messageToken: String
 ) : ViberBotEvent
 
-
 data class WebhookEvent(
     val event: String,
     val timestamp: Long,
@@ -28,4 +27,11 @@ data class MessageReceivedEvent(
     @JsonProperty("message_token") val messageToken: String,
     val sender: ViberAccount,
     val message: ViberMessage
+) : ViberBotEvent
+
+data class UnsubscribedEvent(
+    val event: String,
+    val timestamp: Long,
+    @JsonProperty("message_token") val messageToken: String,
+    @JsonProperty("user_id") val userId: String
 ) : ViberBotEvent
